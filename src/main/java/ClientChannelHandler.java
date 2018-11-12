@@ -5,19 +5,19 @@ public class ClientChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("client:channelActive");
+  //      System.out.println("client:channelActive");
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("client:channelRead");
-        System.out.println("client接收到服务器返回的消息:" + msg);
+  //      System.out.println("client:channelRead");
+ //       System.out.println("client接收到服务器返回的消息:" + msg);
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         super.channelReadComplete(ctx);
-        System.out.println("client:channelReadComplete");
+ //       System.out.println("client:channelReadComplete");
     }
 
     @Override

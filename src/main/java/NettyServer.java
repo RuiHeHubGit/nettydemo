@@ -9,18 +9,29 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
+import java.util.Comparator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 public class NettyServer {
     public final static int DEF_PORT = 6666;
     private static int serverPort;
     private static EventLoopGroup bossGroup;
     private static EventLoopGroup wokerGroup;
+    private static Consumer<Throwable> callback;
+
 
     public static void start() {
-        start(DEF_PORT);
+        start(null);
     }
 
-    public static void start(int port) {
+    public static void start(Consumer<Throwable> callback) {
+        start(DEF_PORT, callback);
+    }
+
+    public static void start(int port, Consumer<Throwable> callback) {
         serverPort = port;
+        NettyServer.callback = callback;
         int aps = Runtime.getRuntime().availableProcessors();
         bossGroup = new NioEventLoopGroup(aps * 2);
         wokerGroup = new NioEventLoopGroup(aps * 2);
@@ -42,8 +53,15 @@ public class NettyServer {
         try {
             System.out.println("server start ..");
             ChannelFuture future = bootstrap.bind(port).sync();
+            if(callback != null) {
+                callback.accept(null);
+            }
             future.channel().closeFuture().sync();
+            System.out.println("server close.");
         } catch (InterruptedException e) {
+            if(callback != null) {
+                callback.accept(e);
+            }
             e.printStackTrace();
         } finally {
             bossGroup.shutdownGracefully();
